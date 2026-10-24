@@ -5,7 +5,7 @@ on the side of a skyscraper. Plays on phones (touch) and desktops (keyboard).
 
 - `index.html`: landing page (trailer slot, Play button, how to play, credits)
 - `play/`: the game (static three.js app, no build step)
-- `media/`: page images and the launch trailer (`trailer.mp4`, 720x1280 web encode; full-quality masters live in the Ozone workspace)
+- `media/`: page images and the launch trailer (`trailer.mp4`, 720x1280 web encode)
 
 ## Run locally
 
@@ -25,11 +25,6 @@ npx serve .
 
 Every path is relative, so the site works at `https://<user>.github.io/<repo>/` or on a custom domain.
 `.nojekyll` makes Pages serve the files as they are.
-
-## Updating the game
-
-The game source lives in `reels/002-orbit-valet/build/game` in the Ozone workspace. After changes there run
-`node tools/build-ship.mjs` from that folder to refresh `play/`, then commit here.
 
 ## Credits
 
