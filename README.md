@@ -21,7 +21,7 @@ npx serve .
 
 1. Create an empty public repository on GitHub.
 2. `git remote add origin <repo-url>` then `git push -u origin main`
-3. Repository Settings â†’ Pages â†’ Source: *Deploy from a branch*, Branch: `main`, folder `/ (root)`.
+3. Repository Settings → Pages → Source: *Deploy from a branch*, Branch: `main`, folder `/ (root)`.
 
 Every path is relative, so the site works at `https://<user>.github.io/<repo>/` or on a custom domain.
 `.nojekyll` makes Pages serve the files as they are.
