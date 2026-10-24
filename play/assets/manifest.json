@@ -2,18 +2,17 @@
   "car": "assets/car/roadster.glb",
   "radio": {
     "rock": [
-      "assets/radio/placeholder-rock.mp3"
+      "assets/radio/station-rock.mp3"
     ],
     "synthwave": [
-      "assets/radio/station-synthwave.mp3",
-      "assets/radio/placeholder-synthwave.mp3"
+      "assets/radio/station-synthwave.mp3"
     ],
     "chill": [
-      "assets/radio/station-chill.mp3",
-      "assets/radio/placeholder-chill.mp3"
+      "assets/radio/station-chill.mp3"
     ]
   },
   "idents": {
+    "rock": "assets/radio/ident-rock.mp3",
     "synthwave": "assets/radio/ident-synthwave.mp3",
     "chill": "assets/radio/ident-chill.mp3"
   }
