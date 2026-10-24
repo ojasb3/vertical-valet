@@ -5,7 +5,7 @@ on the side of a skyscraper. Plays on phones (touch) and desktops (keyboard).
 
 - `index.html`: landing page (trailer slot, Play button, how to play, credits)
 - `play/`: the game (static three.js app, no build step)
-- `media/`: page images; drop the finished trailer in as `media/trailer.mp4` and the page shows it automatically
+- `media/`: page images and the launch trailer (`trailer.mp4`, 720x1280 web encode; full-quality masters live in the Ozone workspace)
 
 ## Run locally
 

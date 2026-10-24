@@ -105,8 +105,8 @@
 
 <main class="wrap">
   <section class="split" id="trailer">
-    <div class="trailer" id="trailerBox" style="background-image:url(media/shot-wall.jpg)">
-      <div class="soon"><b>TRAILER</b><span>Coming soon</span></div>
+    <div class="trailer">
+      <video src="media/trailer.mp4" poster="media/trailer-poster.jpg" controls playsinline preload="metadata"></video>
     </div>
     <div>
       <h2>THE GAME</h2>
@@ -188,13 +188,5 @@
 
 <footer class="wrap">Vertical Valet is a fan-made game and is not affiliated with any car maker.</footer>
 
-<script>
-  // The trailer slot shows a poster until media/trailer.mp4 exists.
-  fetch('media/trailer.mp4', { method: 'HEAD' }).then((r) => {
-    if (!r.ok) return;
-    const box = document.getElementById('trailerBox');
-    box.innerHTML = '<video src="media/trailer.mp4" poster="media/shot-wall.jpg" controls playsinline preload="metadata"></video>';
-  }).catch(() => {});
-</script>
 </body>
 </html>

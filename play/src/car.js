@@ -10,10 +10,11 @@ function flameTexture() {
   c.width = 64; c.height = 256;
   const g = c.getContext('2d');
   const grd = g.createLinearGradient(0, 0, 0, 256);
+  // cold-gas jet (like the car stage's plumes): white core fading through pale blue to nothing
   grd.addColorStop(0, 'rgba(255,255,255,1)');
-  grd.addColorStop(0.15, 'rgba(160,220,255,0.95)');
-  grd.addColorStop(0.45, 'rgba(255,140,60,0.7)');
-  grd.addColorStop(1, 'rgba(255,60,20,0)');
+  grd.addColorStop(0.2, 'rgba(200,230,255,0.8)');
+  grd.addColorStop(0.55, 'rgba(120,180,255,0.35)');
+  grd.addColorStop(1, 'rgba(90,150,255,0)');
   g.fillStyle = grd;
   g.fillRect(0, 0, 64, 256);
   const h = g.createLinearGradient(0, 0, 64, 0);
@@ -44,7 +45,7 @@ export class CarView {
     this.key.position.set(0, 3.2, -2.5);
     this.root.add(this.key);
     this.under = new THREE.PointLight(0x47e8ff, 6, 6, 2);
-    this.under.position.set(0, -0.5, 0);
+    this.under.position.set(0, -0.95, 0); // well below the glossy floor panel, or it mirrors as a hot square
     this.root.add(this.under);
     this.tilt = new THREE.Euler();
   }
@@ -122,10 +123,12 @@ export class CarView {
 
   // kind: 'lift' | 'boost' | 'sideL' | 'sideR'; dir: exhaust direction in car space
   addNozzle(obj, kind, dir, glowMats = []) {
-    const flame = new THREE.Mesh(new THREE.ConeGeometry(kind === 'boost' ? 0.2 : 0.15, 1.6, 12, 1, true), new THREE.MeshBasicMaterial({ map: this.flameTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, color: new THREE.Color(1.6, 1.6, 1.8) }));
+    const flame = new THREE.Mesh(new THREE.ConeGeometry(kind === 'boost' ? 0.2 : 0.15, 1.6, 12, 1, true), new THREE.MeshBasicMaterial({ map: this.flameTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, color: new THREE.Color(1.3, 1.5, 1.9) }));
     flame.geometry.translate(0, -0.8, 0); // the cone grows along -y from the nozzle
     flame.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir);
     flame.visible = false;
+    // side jets often point straight at a camera, where an additive cone stacks into a bright square
+    if (kind === 'sideL' || kind === 'sideR') flame.material.opacity = 0.3;
     this.body.add(flame);
     if (!glowMats.length && obj.isMesh) glowMats = [obj.material];
     this.nozzles.push({ obj, kind, dir: dir.clone(), flame, glowMats, glow: 0 });
@@ -238,10 +241,10 @@ export class CarView {
       f.visible = nz.glow > 0.03;
       f.position.copy(nz.obj.position);
       const flick = 0.8 + Math.random() * 0.35;
-      const len = (nz.kind === 'boost' ? 1.7 : nz.kind === 'lift' ? 1.25 : 0.7) * nz.glow * flick;
+      const len = (nz.kind === 'boost' ? 1.7 : nz.kind === 'lift' ? 1.25 : 0.45) * nz.glow * flick;
       f.scale.set(nz.glow * (0.9 + Math.random() * 0.2), len, nz.glow * (0.9 + Math.random() * 0.2));
       for (const m of nz.glowMats) {
-        if (this.model) m.emissiveIntensity = 10 * nz.glow;
+        if (this.model) m.emissiveIntensity = (nz.kind === 'sideL' || nz.kind === 'sideR' ? 2 : 5) * nz.glow; // higher blooms into a square
         else m.emissive.setRGB(3 * nz.glow, 1.2 * nz.glow, 0.4 * nz.glow);
       }
       if (nz.glow > 0.2 && fx && nz.kind !== 'sideL' && nz.kind !== 'sideR') {
@@ -251,10 +254,11 @@ export class CarView {
         for (let i = 0; i < n; i++) {
           const v = dirW.clone().multiplyScalar(14 + Math.random() * 8).add(car.v.clone().multiplyScalar(0.6));
           v.x += (Math.random() - 0.5) * 3; v.y += (Math.random() - 0.5) * 3; v.z += (Math.random() - 0.5) * 3;
-          fx.spawn(tmp.clone().addScaledVector(dirW, 0.4), v, { life: 0.3 + Math.random() * 0.2, size: nz.kind === 'lift' ? 0.9 : 1.2, color: [0.8, 0.35, 0.12], drag: 3 });
+          fx.spawn(tmp.clone().addScaledVector(dirW, 0.4), v, { life: 0.35 + Math.random() * 0.25, size: nz.kind === 'lift' ? 1.1 : 1.4, color: [0.22, 0.32, 0.5], drag: 3.5, cold: true });
         }
       }
     }
+    this.under.intensity += ((car.grounded ? 6 : 0) - this.under.intensity) * Math.min(1, dt * 8); // underglow only near a surface
     const braking = (input.throttle || 0) < 0 && car.grounded;
     if (this.tail) this.tail.material.color.setRGB(braking ? 3 : 1.6, 0.06, 0.08);
     if (this.tailMat) this.tailMat.emissiveIntensity = this.tailBase * (braking ? 2.5 : 1);

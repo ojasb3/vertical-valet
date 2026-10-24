@@ -147,6 +147,8 @@
   body.capture .r-hint { display: none; }
   #hud.parked ~ #touch, #hud.paused ~ #touch { display: none !important; }
   body.clean #touch, body.clean .hud-play { display: none !important; }
+  /* trailer source clips: only the station pop and the PARKED. HOME. title */
+  body.trailer #touch, body.trailer .hud-play > :not(.station-pop), body.trailer .card, body.trailer .title-ov { display: none !important; }
 </style>
 <script type="importmap">
 { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }

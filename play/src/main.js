@@ -357,7 +357,7 @@ function handleEvents() {
     } else if (e.type === 'jump') {
       audio.play('jump');
       carView.kick = 1;
-      fx.burst(car.p.clone().addScaledVector(car.n, -0.6), 24, { speed: 7, life: 0.5, size: 1.4, color: [1, 0.5, 0.15], drag: 3 });
+      fx.burst(car.p.clone().addScaledVector(car.n, -0.6), 24, { speed: 7, life: 0.55, size: 1.6, color: [0.22, 0.32, 0.5], drag: 3, cold: true });
     } else if (e.type === 'bump') {
       audio.play('bump', e.s);
       cam.shake = Math.max(cam.shake, e.s * 0.8);
@@ -443,11 +443,13 @@ else hud.showTitle(true, save);
 document.body.classList.toggle("touch", MOBILE);
 document.body.classList.toggle("capture", CAPTURE);
 document.body.classList.toggle("clean", params.has("clean"));
+document.body.classList.toggle("trailer", params.has("trailer"));
 
 // assets/manifest.json (written by tools/import-assets.mjs) lists the real car and songs
 game.carModel = 'placeholder';
 game.assets = fetch('assets/manifest.json').then((r) => (r.ok ? r.json() : null)).catch(() => null).then(async (m) => {
   if (m && m.radio) for (const st of STATIONS) if (m.radio[st.id]) st.files = m.radio[st.id];
+  if (m && m.idents) for (const st of STATIONS) if (m.idents[st.id]) st.ident = m.idents[st.id];
   if (m && m.car) {
     try { await carView.loadModel(m.car); game.carModel = m.car; } catch (e) { console.warn('car model failed, using placeholder', e); }
   }

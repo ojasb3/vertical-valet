@@ -4,11 +4,11 @@
 // station-rock.mp3 / station-synthwave.mp3 / station-chill.mp3 (or .ogg) into assets/radio/
 // (or run `node tools/import-music.mjs`). Until then the placeholder loops play.
 export const STATIONS = [
-  { id: 'rock', name: 'THRUST FM', freq: '101.5', tag: 'Rock that climbs walls', color: '#ff5a3c',
+  { id: 'rock', name: 'WALLRIDE', freq: '104.7', tag: 'Rock for climbing towers at full thrust', color: '#ff5a3c',
     files: ['assets/radio/station-rock.mp3', 'assets/radio/station-rock.ogg', 'assets/radio/placeholder-rock.mp3'] },
-  { id: 'synthwave', name: 'NEON GRID', freq: '88.4', tag: 'Synthwave after midnight', color: '#ff3bd4',
+  { id: 'synthwave', name: 'NEON CLIMB', freq: '88.8', tag: 'Synthwave after midnight', color: '#ff3bd4',
     files: ['assets/radio/station-synthwave.mp3', 'assets/radio/station-synthwave.ogg', 'assets/radio/placeholder-synthwave.mp3'] },
-  { id: 'chill', name: 'ZERO-G LOUNGE', freq: '96.0', tag: 'Chill for precision parking', color: '#3de0ff',
+  { id: 'chill', name: 'SKYLINE LOUNGE', freq: '96.1', tag: 'Chill for precision parking', color: '#3de0ff',
     files: ['assets/radio/station-chill.mp3', 'assets/radio/station-chill.ogg', 'assets/radio/placeholder-chill.mp3'] },
   { id: 'off', name: 'RADIO OFF', freq: '', tag: '', color: '#8890a0', files: [] },
 ];
@@ -212,10 +212,27 @@ export class Audio {
     const g = this.ctx.createGain();
     g.gain.setValueAtTime(0, this.ctx.currentTime);
     g.gain.setTargetAtTime(1, this.ctx.currentTime + 0.25, 0.1);
+    if (!silent && st.ident) this.playIdent(st, g);
     s.connect(g).connect(this.radioBus);
     const offset = (this.ctx.currentTime - this.epoch + i * 17.3) % buf.duration;
     s.start(0, offset);
     this.src = s; this.srcGain = g;
+  }
+
+  // the station ident (a short jingle) plays over the song, which ducks until it ends
+  async playIdent(st, songGain) {
+    try {
+      if (!st.identBuf) st.identBuf = await this.ctx.decodeAudioData(await (await fetch(st.ident)).arrayBuffer());
+    } catch (e) { return; }
+    if (this.src === null || STATIONS[this.station] !== st) return;
+    const t = this.ctx.currentTime;
+    const s = this.ctx.createBufferSource();
+    s.buffer = st.identBuf;
+    s.connect(this.radioBus);
+    s.start(t + 0.2);
+    songGain.gain.cancelScheduledValues(t);
+    songGain.gain.setTargetAtTime(0.3, t, 0.05);
+    songGain.gain.setTargetAtTime(1, t + 0.2 + st.identBuf.duration - 0.3, 0.25);
   }
 
   next() { return this.tune((this.station + 1) % STATIONS.length); }

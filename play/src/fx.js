@@ -38,6 +38,7 @@ export class Particles {
     this.drag = new Float32Array(max);
     this.grav = new Float32Array(max);
     this.size0 = new Float32Array(max);
+    this.cold = new Uint8Array(max); // cold-gas puffs: blue-white instead of hot orange
     this.next = 0;
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(this.pos, 3).setUsage(THREE.DynamicDrawUsage));
@@ -52,7 +53,8 @@ export class Particles {
     scene.add(this.points);
   }
 
-  spawn(p, v, { life = 0.6, size = 1, color = [1, 0.6, 0.2], drag = 1.5, grav = 0 }) {
+  spawn(p, v, opts) {
+    const { life = 0.6, size = 1, color = [1, 0.6, 0.2], drag = 1.5, grav = 0 } = opts;
     const i = this.next;
     this.next = (this.next + 1) % this.max;
     this.pos.set([p.x, p.y, p.z], i * 3);
@@ -63,6 +65,7 @@ export class Particles {
     this.size0[i] = size;
     this.drag[i] = drag;
     this.grav[i] = grav;
+    this.cold[i] = opts.cold ? 1 : 0;
   }
 
   update(dt) {
@@ -77,11 +80,12 @@ export class Particles {
       const t = this.age[i] / this.life[i];
       // hot white-yellow core cooling to orange then dark red
       const heat = Math.max(0, 1 - t * 1.6);
-      this.col[i * 4] = this.base[i * 3] + heat * 0.6;
-      this.col[i * 4 + 1] = this.base[i * 3 + 1] * (1 - t * 0.6) + heat * 0.4;
-      this.col[i * 4 + 2] = this.base[i * 3 + 2] * (1 - t) + heat * 0.25;
-      this.col[i * 4 + 3] = (1 - t) * 1.6;
-      this.size[i] = this.size0[i] * (0.6 + t * 1.4);
+      const hc = this.cold[i] ? [0.35, 0.42, 0.55] : [0.6, 0.4, 0.25];
+      this.col[i * 4] = this.base[i * 3] + heat * hc[0];
+      this.col[i * 4 + 1] = this.base[i * 3 + 1] * (1 - t * 0.6) + heat * hc[1];
+      this.col[i * 4 + 2] = this.base[i * 3 + 2] * (1 - t * (this.cold[i] ? 0.4 : 1)) + heat * hc[2];
+      this.col[i * 4 + 3] = (1 - t) * (this.cold[i] ? 0.6 : 1.6);
+      this.size[i] = this.size0[i] * (this.cold[i] ? 0.5 + t * 3.2 : 0.6 + t * 1.4);
     }
     const g = this.points.geometry;
     g.attributes.position.needsUpdate = true;

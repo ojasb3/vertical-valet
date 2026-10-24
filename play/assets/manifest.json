@@ -5,10 +5,16 @@
       "assets/radio/placeholder-rock.mp3"
     ],
     "synthwave": [
+      "assets/radio/station-synthwave.mp3",
       "assets/radio/placeholder-synthwave.mp3"
     ],
     "chill": [
+      "assets/radio/station-chill.mp3",
       "assets/radio/placeholder-chill.mp3"
     ]
+  },
+  "idents": {
+    "synthwave": "assets/radio/ident-synthwave.mp3",
+    "chill": "assets/radio/ident-chill.mp3"
   }
 }
