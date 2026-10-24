@@ -17,11 +17,11 @@ npx serve .
 
 (Opening `index.html` from disk won't run the game: browsers block JavaScript modules on `file://`.)
 
-## Publish on GitHub Pages (Oz approves this step)
+## Publish on GitHub Pages
 
 1. Create an empty public repository on GitHub.
 2. `git remote add origin <repo-url>` then `git push -u origin main`
-3. Repository Settings → Pages → Source: *Deploy from a branch*, Branch: `main`, folder `/ (root)`.
+3. Repository Settings â†’ Pages â†’ Source: *Deploy from a branch*, Branch: `main`, folder `/ (root)`.
 
 Every path is relative, so the site works at `https://<user>.github.io/<repo>/` or on a custom domain.
 `.nojekyll` makes Pages serve the files as they are.
@@ -30,4 +30,5 @@ Every path is relative, so the site works at `https://<user>.github.io/<repo>/` 
 
 Built by Claude (Anthropic): game code, levels, physics, sound effects, the car model (Blender) and this page.
 Idea and direction: Oz. Uses [three.js](https://threejs.org/) r170 (MIT licence, see `play/vendor/three/LICENSE`).
+Radio: composed and mixed by Claude in FL Studio; guitar and bass Shreddage 3 Stratus/Precision FREE (Impact Soundworks); drums DRSKit by DrumGizmo (CC BY 4.0).
 No real-world car brands, badges or logos are used.
