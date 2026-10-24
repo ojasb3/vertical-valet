@@ -1,0 +1,14 @@
+{
+  "car": "assets/car/roadster.glb",
+  "radio": {
+    "rock": [
+      "assets/radio/placeholder-rock.mp3"
+    ],
+    "synthwave": [
+      "assets/radio/placeholder-synthwave.mp3"
+    ],
+    "chill": [
+      "assets/radio/placeholder-chill.mp3"
+    ]
+  }
+}

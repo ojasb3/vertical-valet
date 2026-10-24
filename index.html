@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vertical Valet: park it on the side of a skyscraper</title>
+<meta name="description" content="A free browser game. Drive a rocket-thruster sports car up the walls of a night city and park it in a garage bay on the side of a skyscraper. Plays on phones and desktops.">
+<meta name="theme-color" content="#07060f">
+<meta property="og:title" content="Vertical Valet">
+<meta property="og:description" content="Drive up the walls. Park it on the 62nd floor. Free in your browser.">
+<meta property="og:image" content="media/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="media/icon.svg" type="image/svg+xml">
+<style>
+  :root { --cyan: #35f2ff; --pink: #ff3bd4; --mint: #7dffc3; --amber: #ffb02e; --ink: #f2f4ff; --dim: #a3abcc; --bg: #07060f; --card: #0f0e1f; --line: rgba(255,255,255,.09); }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: var(--cyan); }
+  .wrap { width: min(1080px, 100%); margin: 0 auto; padding: 0 20px; }
+
+  /* hero */
+  .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; background: url(media/poster-tall.jpg) center 30% / cover no-repeat; }
+  .hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,6,15,.25) 0%, rgba(7,6,15,.05) 35%, rgba(7,6,15,.85) 72%, var(--bg) 100%); }
+  .hero-inner { position: relative; padding: 0 20px max(34px, env(safe-area-inset-bottom)); width: min(1080px, 100%); margin: 0 auto; }
+  .logo { display: flex; flex-direction: column; line-height: .86; transform: skewX(-8deg); transform-origin: left bottom; margin: 0; }
+  .logo .l1 { font-size: clamp(52px, 15vw, 120px); font-weight: 900; letter-spacing: .05em; color: #fff; text-shadow: 0 0 20px var(--pink), 0 0 50px rgba(255,59,212,.55), 0 4px 0 #3a0a40; }
+  .logo .l2 { font-size: clamp(62px, 18vw, 148px); font-weight: 900; letter-spacing: .14em; color: transparent; -webkit-text-stroke: 2px var(--cyan); text-shadow: 0 0 22px rgba(53,242,255,.65); }
+  .tag { font-size: clamp(17px, 4.4vw, 24px); margin: 18px 0 22px; max-width: 36ch; color: #e3e7ff; text-shadow: 0 1px 8px #000; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .play { display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; border-radius: 999px; font-size: 22px; font-weight: 900; letter-spacing: .26em;
+    color: #fff; text-decoration: none; background: linear-gradient(90deg, #13c9ff, #8b5bff); box-shadow: 0 0 30px rgba(53,180,255,.55), 0 10px 30px rgba(0,0,0,.4); }
+  .play:active { transform: scale(.98); }
+  .play svg { width: 18px; height: 18px; }
+  .sub { font-size: 14px; color: var(--dim); }
+  .sub b { color: var(--ink); font-weight: 600; }
+
+  section { padding: 64px 0 8px; }
+  h2 { font-size: 13px; letter-spacing: .3em; color: var(--cyan); margin: 0 0 18px; font-weight: 800; }
+  h3 { margin: 0 0 6px; font-size: 18px; }
+  p { color: var(--dim); margin: 0 0 12px; }
+
+  /* trailer */
+  .trailer { position: relative; aspect-ratio: 9 / 16; max-height: 78svh; margin: 0 auto; border-radius: 22px; overflow: hidden; background: #000 center / cover no-repeat;
+    border: 1px solid var(--line); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .trailer video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .soon { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 26px; text-align: center;
+    background: linear-gradient(180deg, transparent 40%, rgba(7,6,15,.9)); }
+  .soon b { font-size: 13px; letter-spacing: .3em; color: var(--amber); }
+  .soon span { color: #dfe3ff; font-size: 15px; }
+
+  /* how to play */
+  .grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .keys { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center; margin-top: 8px; }
+  kbd { font: 700 13px/1 "Consolas", ui-monospace, monospace; color: var(--ink); background: #1a1930; border: 1px solid rgba(255,255,255,.15); border-bottom-width: 3px; border-radius: 7px; padding: 6px 8px; white-space: nowrap; }
+  .keys span { color: var(--dim); font-size: 15px; }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .steps li { counter-increment: s; position: relative; padding-left: 44px; color: var(--dim); }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; color: var(--bg); background: var(--cyan); }
+  .steps li b { color: var(--ink); }
+
+  /* shots */
+  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .shots img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px; border: 1px solid var(--line); display: block; }
+
+  .levels { display: grid; gap: 10px; }
+  .lv { display: flex; gap: 14px; align-items: baseline; padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+  .lv .n { font-size: 26px; font-weight: 900; color: var(--cyan); line-height: 1; }
+  .lv .h { margin-left: auto; color: var(--amber); font-weight: 800; font-size: 13px; letter-spacing: .1em; white-space: nowrap; }
+  .lv p { margin: 2px 0 0; font-size: 14px; }
+
+  .credits dl { display: grid; grid-template-columns: 1fr; gap: 2px 18px; margin: 0; }
+  .credits dt { color: var(--ink); font-weight: 700; margin-top: 10px; }
+  .credits dd { margin: 0; color: var(--dim); }
+  .made { margin-top: 26px; display: inline-flex; gap: 10px; align-items: center; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-weight: 700; }
+  .made i { width: 10px; height: 10px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 10px var(--mint); }
+  footer { padding: 48px 0 max(40px, env(safe-area-inset-bottom)); color: #6c7393; font-size: 13px; }
+  .bottom-play { text-align: center; padding: 56px 0 0; }
+
+  @media (min-width: 760px) {
+    .hero { justify-content: center; }
+    .hero-bg { background-image: url(media/hero-wide.jpg); background-position: center 60%; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .split { display: grid; grid-template-columns: minmax(0, 360px) 1fr; gap: 40px; align-items: center; }
+    .credits dl { grid-template-columns: 220px 1fr; }
+    .credits dt { margin-top: 0; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-bg" role="img" aria-label="A red sports car leaping between lit skyscrapers at night"></div>
+  <div class="hero-inner">
+    <h1 class="logo"><span class="l1">VERTICAL</span><span class="l2">VALET</span></h1>
+    <p class="tag">Your parking spot is on the side of a skyscraper. Drive up the walls. Park it.</p>
+    <div class="cta">
+      <a class="play" href="play/"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="#fff"/></svg>PLAY</a>
+      <span class="sub"><b>Free</b>, in your browser · phone or desktop · no download</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="split" id="trailer">
+    <div class="trailer" id="trailerBox" style="background-image:url(media/shot-wall.jpg)">
+      <div class="soon"><b>TRAILER</b><span>Coming soon</span></div>
+    </div>
+    <div>
+      <h2>THE GAME</h2>
+      <h3>A sports car with rocket thrusters. A city that's all walls.</h3>
+      <p>Your car's tyres stick to anything. Drive straight into a building and you're driving up it. Fire the
+        thrusters to leap from tower to tower, climb higher, and finish with the hard part: a precise park in a
+        garage bay hanging 246 metres above the street.</p>
+      <p>Fuel is limited and refills while you drive. Score comes from time, fuel left and how cleanly you park.
+        Three in-car radio stations keep you company.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="shots">
+      <img src="media/shot-wall.jpg" alt="The car clinging to the face of a skyscraper" loading="lazy">
+      <img src="media/shot-jump.jpg" alt="Thrusters firing during a jump across a street canyon" loading="lazy">
+      <img src="media/shot-park.jpg" alt="The car parked in its glowing garage bay" loading="lazy">
+    </div>
+  </section>
+
+  <section id="how">
+    <h2>HOW TO PLAY</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>The idea</h3>
+        <ol class="steps">
+          <li><b>Drive into a wall</b> and the car sticks to it. Climb.</li>
+          <li><b>Jump</b> off a wall or roof; <b>hold jump</b> in the air to fire the lift thrusters.</li>
+          <li><b>Glass gives no grip.</b> Go around it.</li>
+          <li>Roll into the glowing bay and <b>stop on the mark</b>, nose in. PARKED. HOME.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>Desktop</h3>
+        <div class="keys">
+          <kbd>W A S D</kbd><span>drive and steer (or the arrow keys)</span>
+          <kbd>Space</kbd><span>tap to jump, hold for lift thrusters</span>
+          <kbd>Shift</kbd><span>rocket boost</span>
+          <kbd>Q</kbd><span>change radio station</span>
+          <kbd>R</kbd><span>restart the level</span>
+          <kbd>Esc</kbd><span>pause</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Phone</h3>
+        <div class="keys">
+          <kbd>Left thumb</kbd><span>drag to steer; push up to drive, pull down to brake</span>
+          <kbd>JUMP</kbd><span>tap to leap, hold for lift</span>
+          <kbd>BOOST</kbd><span>rocket boost</span>
+          <kbd>Radio</kbd><span>tap the station panel, top right</span>
+        </div>
+        <p style="margin-top:12px">Turn your sound on: the radio is half the fun.</p>
+      </div>
+      <div class="card">
+        <h3>Levels</h3>
+        <div class="levels">
+          <div class="lv"><span class="n">1</span><div><b>First Climb</b><p>Learn to stick, climb and jump.</p></div><span class="h">62 m</span></div>
+          <div class="lv"><span class="n">2</span><div><b>The Canyon</b><p>Wall-jump across the street.</p></div><span class="h">156 m</span></div>
+          <div class="lv"><span class="n">3</span><div><b>Sky Dock</b><p>Long gaps, little fuel.</p></div><span class="h">246 m</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="credits" id="credits">
+    <h2>CREDITS</h2>
+    <dl>
+      <dt>Game, code, levels</dt><dd>Built by Claude (Anthropic): physics, rendering, sound effects and test bot.</dd>
+      <dt>Car</dt><dd>Modelled by Claude in Blender. An original design: no real-world badges or logos.</dd>
+      <dt>Radio</dt><dd>Three original stations made for the game.</dd>
+      <dt>Idea and direction</dt><dd>Oz</dd>
+      <dt>Open source</dt><dd><a href="https://threejs.org/">three.js</a> r170, © 2010–2024 three.js authors, <a href="play/vendor/three/LICENSE">MIT licence</a>. Rendered with WebGL; sound with the Web Audio API.</dd>
+    </dl>
+    <div class="made"><i></i>Made with Claude</div>
+  </section>
+
+  <div class="bottom-play"><a class="play" href="play/"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="#fff"/></svg>PLAY</a></div>
+</main>
+
+<footer class="wrap">Vertical Valet is a fan-made game and is not affiliated with any car maker.</footer>
+
+<script>
+  // The trailer slot shows a poster until media/trailer.mp4 exists.
+  fetch('media/trailer.mp4', { method: 'HEAD' }).then((r) => {
+    if (!r.ok) return;
+    const box = document.getElementById('trailerBox');
+    box.innerHTML = '<video src="media/trailer.mp4" poster="media/shot-wall.jpg" controls playsinline preload="metadata"></video>';
+  }).catch(() => {});
+</script>
+</body>
+</html>
