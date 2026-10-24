@@ -52,7 +52,7 @@ scene.add(moonLight);
   panel(new THREE.Color(0.6, 0.7, 1.4), [0, 2, -9], [12, 3]);
   panel(new THREE.Color(1.2, 0.5, 0.3), [2, -6, 6], [14, 2]);
   const pm = new THREE.PMREMGenerator(renderer);
-  scene.environment = pm.fromScene(env, 0.02).texture;
+  scene.environment = pm.fromScene(env, 0.05).texture;
 })();
 
 const composer = new EffectComposer(renderer);
@@ -417,7 +417,7 @@ function frame(dtReal) {
   fx.update(dt);
   updateShadow();
   updateCamera(dtReal);
-  speedLines.update(dt, game.state === "play" ? car.speed : 0);
+  speedLines.update(dt, game.state === "play" && !params.has("clean") ? car.speed : 0);
   city.update(dt, camera, game.time);
   if (game.level && city.bayMats) city.setBayState(game.state === 'parked' ? 'parked' : game.inBay ? 'inside' : game.bay && game.bay.dist < 40 ? 'near' : 'idle', game.time);
   audio.update(car, game.lastInput || input.state, dt);

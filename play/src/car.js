@@ -151,9 +151,32 @@ export class CarView {
     model.traverse((o) => {
       if (!o.isMesh) return;
       const m = o.material;
-      if (m.name === 'paint_red') { m.envMapIntensity = 2.8; this.paint = m; }
-      if (m.name === 'glass_tint') m.envMapIntensity = 1.6;
-      if (m.name === 'led_white') m.emissiveIntensity = 3.5; // authored for Cycles; bloom needs less
+      if (m.name === 'paint_red') { m.envMapIntensity = 2.8; m.clearcoatRoughness = Math.max(m.clearcoatRoughness || 0, 0.14); this.paint = m; }
+      if (m.name === 'glass_tint') { m.envMapIntensity = 0.7; m.roughness = Math.max(m.roughness, 0.18); } // a mirror canopy shows the env panels as hot squares
+      if (m.name === 'led_white') {
+        m.emissiveIntensity = 3.5; // authored for Cycles; bloom needs less
+        // the cabin's screen shares this material with the headlight strips and blooms through
+        // the glass: move the triangles inside the cabin onto a dim copy
+        const g = o.geometry, idx = g.index, pos = g.attributes.position;
+        if (idx) {
+          const keep = [], dim = [], v = new THREE.Vector3();
+          for (let i = 0; i < idx.count; i += 3) {
+            v.set(0, 0, 0);
+            for (let k = 0; k < 3; k++) v.add(new THREE.Vector3().fromBufferAttribute(pos, idx.getX(i + k)));
+            v.divideScalar(3);
+            (Math.abs(v.z) < 1.3 && v.y > 0.3 ? dim : keep).push(idx.getX(i), idx.getX(i + 1), idx.getX(i + 2));
+          }
+          if (dim.length) {
+            g.setIndex(keep.concat(dim));
+            g.clearGroups();
+            g.addGroup(0, keep.length, 0);
+            g.addGroup(keep.length, dim.length, 1);
+            const d = m.clone();
+            d.emissiveIntensity = 0.25;
+            o.material = [m, d];
+          }
+        }
+      }
       if (m.name === 'tail_red') { o.material = m.clone(); this.tailMat = o.material; this.tailBase = 3.5; }
     });
     for (const name of ['FL', 'FR', 'RL', 'RR']) {
